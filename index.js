@@ -265,7 +265,7 @@ app.get("/seed", async (req, res) => {
 if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, () => {
     console.log(`\n=========================================`);
-    console.log(`🚀 Servidor COMPLETO rodando em http://localhost:3000`);
+    console.log(`🚀 Servidor COMPLETO rodando em http://localhost:${PORT}`);
     console.log(`=========================================\n`);
   });
 }
