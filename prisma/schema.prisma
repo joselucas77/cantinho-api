@@ -1,0 +1,42 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Mesa {
+  id       Int       @id @default(autoincrement())
+  numero   Int       @unique
+  status   String    @default("livre") // "livre" ou "aberta"
+  comandas Comanda[]
+}
+
+model Cardapio {
+  id           Int           @id @default(autoincrement())
+  nome         String
+  preco        Float
+  categoria    String // "entrada", "prato", "bebida", "sobremesa"
+  ItemComanda ItemComanda[]
+}
+
+model Comanda {
+  id            Int           @id @default(autoincrement())
+  mesaId        Int
+  mesa          Mesa          @relation(fields: [mesaId], references: [id])
+  status        String        @default("aberta") // "aberta" ou "fechada"
+  valorTotal    Float         @default(0.0)
+  dataAbertura  DateTime      @default(now())
+  itens         ItemComanda[]
+}
+
+model ItemComanda {
+  id             Int      @id @default(autoincrement())
+  comandaId      Int
+  comanda        Comanda  @relation(fields: [comandaId], references: [id], onDelete: Cascade)
+  itemCardapioId Int
+  itemCardapio   Cardapio @relation(fields: [itemCardapioId], references: [id])
+  quantidade     Int      @default(1)
+  observacao     String?
+}
