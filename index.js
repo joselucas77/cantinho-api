@@ -9,7 +9,7 @@ const app = express();
 app.use(cors()); // Permite que o frontend acesse o backend livremente
 app.use(express.json());
 
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 // Rota de teste
 app.get("/", (req, res) => {
@@ -265,7 +265,7 @@ app.get("/seed", async (req, res) => {
 if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, () => {
     console.log(`\n=========================================`);
-    console.log(`🚀 Servidor COMPLETO rodando em http://localhost:${PORT}`);
+    console.log(`🚀 Servidor COMPLETO rodando em http://localhost:3000`);
     console.log(`=========================================\n`);
   });
 }
