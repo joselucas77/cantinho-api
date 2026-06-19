@@ -1,5 +1,4 @@
 // index.js
-// index.js
 import express from "express";
 import cors from "cors";
 import prisma from "./database.js";
@@ -10,14 +9,14 @@ const app = express();
 app.use(cors()); // Permite que o frontend acesse o backend livremente
 app.use(express.json());
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Rota de teste
 app.get("/", (req, res) => {
   res.json({ status: "API do Cantinho está online e completa! 🚀" });
 });
 
-//  Listar todas as mesas (com o status atual de cada uma)
+// Listar todas as mesas (com o status atual de cada uma)
 app.get("/mesas", async (req, res) => {
   try {
     const mesas = await prisma.mesa.findMany({
@@ -31,7 +30,7 @@ app.get("/mesas", async (req, res) => {
   }
 });
 
-//  Listar todos os itens do cardápio
+// Listar todos os itens do cardápio
 app.get("/cardapio", async (req, res) => {
   try {
     const cardapio = await prisma.cardapio.findMany();
@@ -79,7 +78,7 @@ app.post("/comandas", async (req, res) => {
   }
 });
 
-//  Adicionar itens/pedidos a uma comanda existente
+// Adicionar itens/pedidos a uma comanda existente
 app.post("/comandas/:id/itens", async (req, res) => {
   const comandaId = parseInt(req.params.id);
   const { itemCardapioId, quantidade, observacao } = req.body;
@@ -120,12 +119,10 @@ app.post("/comandas/:id/itens", async (req, res) => {
 
     res.json(novoItem);
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        error: "Erro ao adicionar item à comanda",
-        detalhes: error.message,
-      });
+    res.status(500).json({
+      error: "Erro ao adicionar item à comanda",
+      detalhes: error.message,
+    });
   }
 });
 
@@ -263,9 +260,15 @@ app.get("/seed", async (req, res) => {
   }
 });
 
-// Inicia o servidor
-app.listen(PORT, () => {
-  console.log(`\n=========================================`);
-  console.log(`🚀 Servidor COMPLETO rodando em http://localhost:${PORT}`);
-  console.log(`=========================================\n`);
-});
+// MODIFICAÇÃO PARA A VERCEL:
+// O servidor só abre a porta localmente se não estiver em ambiente de produção (Vercel)
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => {
+    console.log(`\n=========================================`);
+    console.log(`🚀 Servidor COMPLETO rodando em http://localhost:${PORT}`);
+    console.log(`=========================================\n`);
+  });
+}
+
+// Exporta o app Express para que as Serverless Functions da Vercel possam gerenciá-lo
+export default app;
